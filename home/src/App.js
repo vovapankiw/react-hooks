@@ -2,9 +2,12 @@ import { useState } from "react";
 import Joke from "./Joke";
 import Stories from "./Stories";
 import Task from "./Task";
+import Gallery from "./Gallery";
+import Matrix from "./Matrix";
 
 function App() {
   const [userQuery, setUserQuery] = useState("");
+  const [showGallery, setShowGalley] = useState(true);
 
   const serachQuery = () => {
     window.open(`https://google.com/search?q=${userQuery}`, "_blank");
@@ -18,6 +21,10 @@ function App() {
 
   const updateUser = (event) => {
     setUserQuery(event.target.value);
+  };
+
+  const toggleGallery = () => {
+    setShowGalley(!showGallery);
   };
 
   return (
@@ -37,6 +44,11 @@ function App() {
       <Stories />
       <hr />
       <Task />
+      <hr />
+      {showGallery && <Gallery />}
+      <button onClick={toggleGallery}>Toggle Galley</button>
+      <hr />
+      <Matrix />
     </div>
   );
 }

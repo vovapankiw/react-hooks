@@ -15,3 +15,19 @@ export const useFetch = (url, initValue) => {
 
   return result;
 };
+
+export const useDynamicTransition = ({ increment, delay, length }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((i) => (i + increment) % length);
+    }, delay);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [delay, increment, length]);
+
+  return index;
+};
