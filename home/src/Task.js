@@ -1,5 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import uuid from "uuid/v4";
+
+const initialTasksState = {
+  tasks: [],
+  completedTasks: [],
+};
+
+const TYPES = {
+  ADD_TASK: "ADD_TASK",
+  COMPLETE_TASK: "COMPLETE_TASK",
+  DELETE_TASK: "DELETE_TASK",
+};
+
+const tasksReducer = (state, action) => {
+  console.log(state);
+  switch (action.type) {
+    case TYPES.ADD_TASK:
+      return {
+        ...state,
+        tasks: [...state.tasks, action.task],
+      };
+    case TYPES.COMPLETE_TASK:
+      const { completedTask } = action;
+
+      return {
+        ...state,
+        completedTasks: [...state.completedTasks, completedTask],
+        tasks: state.tasks.filter((t) => t.id !== completedTask.id),
+      };
+    case TYPES.DELETE_TASK:
+      return {
+        ...state,
+        compelteTask: [
+          ...state.completedTasks.filter((t) => t.id !== action.task.id),
+        ],
+      };
+    default:
+      return state;
+  }
+};
 
 const TASK_STORAGE_KEY = "TASK_STORAGE_KEY";
 
@@ -9,16 +48,15 @@ const storeTasks = (taskMap) => {
 
 const readStoreTask = () => {
   const taskMap = JSON.parse(localStorage.getItem(TASK_STORAGE_KEY));
-  return taskMap ? taskMap : { tasks: [], completedTasks: [] };
+  return taskMap ? taskMap : initialTasksState;
 };
 
 export default function Task() {
   const storeTask = readStoreTask();
   const [taskText, setTaskText] = useState("");
-  const [tasks, setTasks] = useState(storeTask.tasks);
-  const [completedTasks, setCompletedTasks] = useState(
-    storeTask.completedTasks
-  );
+
+  const [state, dispatch] = useReducer(tasksReducer, storeTask);
+  const { tasks, completedTasks } = state;
 
   useEffect(() => {
     storeTasks({ tasks, completedTasks });
@@ -29,21 +67,17 @@ export default function Task() {
   };
 
   const addTask = () => {
-    setTasks([...tasks, { taskText, id: uuid() }]);
+    dispatch({ type: TYPES.ADD_TASK, task: { taskText, id: uuid() } });
   };
 
-  const completeTask = (compelteTask) => {
-    setCompletedTasks([...completedTasks, compelteTask]);
-    setTasks(tasks.filter((task) => task.id !== compelteTask.id));
+  const completeTask = (completedTask) => {
+    dispatch({ type: TYPES.COMPLETE_TASK, completedTask });
   };
 
   const deleteTask = (deletedTask) => {
-    setCompletedTasks(
-      completedTasks.filter((task) => task.id !== deletedTask.id)
-    );
+    dispatch({ type: TYPES.COMPLETE_TASK, task: deleteTask });
   };
 
-  console.log(tasks);
   return (
     <div>
       <h3>Tasks</h3>
