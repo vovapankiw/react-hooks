@@ -1,8 +1,8 @@
-import { Todo } from "@/app/types/todo.type";
+import { Todo } from "@/types/todo.type";
 
 type Props = {
   todo: Todo;
-  onCompleteTodo: (id: string, checkbox: boolean) => void;
+  onCompleteTodo: (id: string) => void;
   onRemoveTodo: (id: string) => void;
 };
 
@@ -18,7 +18,7 @@ export default function TodoItem({
       <input
         type="checkbox"
         checked={completed}
-        onChange={(e) => onCompleteTodo(id, e.target.checked)}
+        onChange={(e) => onCompleteTodo(id)}
       />
       {!completed && <span>{text}</span>}
       {completed && <s>{text}</s>}

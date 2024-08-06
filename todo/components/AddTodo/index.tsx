@@ -1,25 +1,19 @@
-import { useState } from "react";
-import { Todo } from "@/app/types/todo.type";
+import { useState, memo } from "react";
+
 import PlusIcon from "@/icons/PlusIcon";
 
 type Props = {
-  onAddTodo: (todo: Todo) => void;
+  createTodo: (text: string) => void;
 };
 
-export default function AddTodo({ onAddTodo }: Props) {
+export default memo(function AddTodo({ createTodo }: Props) {
   const [value, setValue] = useState("");
-
   const handleCahnge = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
   const addTodo = () => {
-    onAddTodo({
-      id: Date.now().toString(),
-      text: value,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    });
+    createTodo(value);
     setValue("");
   };
 
@@ -47,4 +41,4 @@ export default function AddTodo({ onAddTodo }: Props) {
       </button>
     </div>
   );
-}
+});
