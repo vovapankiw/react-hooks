@@ -1,7 +1,7 @@
 import { CellValue } from "../types/cellValue";
 import { GameResult, GameState } from "../types/gameResult";
 
-// This algorythm works only for 3X3 board
+// This algorithm works only for 3X3 board
 export const calculateGameResult = (squares: CellValue[]): GameState => {
   const winner = getWinner(squares);
 
