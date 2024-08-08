@@ -15,6 +15,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("./plugins/disableVariant")],
 };
 export default config;
