@@ -1,58 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import clsx from "clsx";
-import { CellValue } from "@/app/types/cellValue";
-import { Player } from "@/app/types/player";
+import { useGameState } from "@/app/hooks/useGameState";
+import { isGameOver } from "@/app/utils/isGameOver";
 import Board from "../Board";
+import GameResults from "../GameResult";
+import GameControls from "../GameControls";
 
 export default function Game() {
-  const [moves, setMoves] = useState<CellValue[]>(Array(9).fill(null));
-  const [currPlayer, setCurrPlayer] = useState<Player>(Player.X);
-
-  const handlePlay = (cellIndex: number) => {
-    if (calculateWinner(moves) || moves[cellIndex]) return;
-
-    setMoves((prev) => {
-      return prev.map((el, i) => (i === cellIndex ? currPlayer : el));
-    });
-    setCurrPlayer((prev) => (prev === Player.X ? Player.O : Player.X));
-  };
-
-  const winner = calculateWinner(moves);
+  const { moves, handlePlay, restartGame, currPlayer, gameState } =
+    useGameState();
 
   return (
-    <div>
-      <div className="mb-4">
-        {winner && <h2>Game winner {winner}</h2>}
-        {!winner && <h2>Current player {currPlayer}</h2>}
+    <div className="size-40 flex flex-col gap-5 justify-center items-center">
+      <div>
+        <GameResults state={gameState} currPlayer={currPlayer} />
       </div>
-      <div className={clsx({ disable: winner }, "group")}>
+      <div className={clsx({ disable: isGameOver(gameState) }, "group")}>
         <Board cells={moves} onPlay={handlePlay} />
+      </div>
+      <div>
+        <GameControls restartGame={restartGame} />
       </div>
     </div>
   );
-}
-
-function calculateWinner(squares: CellValue[]): CellValue {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  for (let line of lines) {
-    const [a, b, c] = line;
-
-    if (squares[a] === squares[b] && squares[b] === squares[c]) {
-      return squares[a];
-    }
-  }
-
-  return null;
 }
